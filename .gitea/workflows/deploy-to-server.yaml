@@ -1,0 +1,74 @@
+name: Deploy VitePress site to Server
+
+on:
+  push:
+    tags: ["main"] # 推送 main 分支的时候执行
+
+jobs:
+  #### 构建流程 ####
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # 安装 node 环境
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+
+      # 安装 pnpm
+      - name: install pnpm
+        uses: pnpm/action-setup@master
+        with:
+          version: 8
+
+      # 安装项目需要的依赖
+      - name: install dependencies
+        run: pnpm install
+
+      # 编译源码 -> 压缩需要的文件
+      - name: build source codes with vitepress
+        run: |
+          pnpm docs:build
+          mv ./docs/.vitepress/dist
+          tar -jcvf artifact.bz2 ./run.sh ./dist
+
+      # 将打包的结果到服务器
+      - name: upload
+        steps:
+          - uses: actions/checkout@v3
+          - name: copy file via ssh password
+            uses: appleboy/scp-action@v0.1.4
+            with:
+              host: ${{ secrets.SSH_HOST }}
+              port: ${{ secrets.SSH_PORT }}
+              username: ${{ secrets.SSH_USERNAME }}
+              password: ${{ secrets.SSH_PASSWORD }}
+              source: ./artifacts.bz2
+              target: ~/deploy-directory
+
+  #### 部署到服务器流程 ####
+  deploy:
+    needs: build # 需要等待构建完成
+    runs-on: ubuntu-latest # 运行在一个 unbuntu 服务器上
+    name: Deploy
+    steps:
+      - name: Deploy to Server
+        id: deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            rm -rf ~/learn-github-actions-demo    # 清除上次打包缓存
+            mkdir -p ~/learn-github-actions-demo  # 创建目录
+            cd ~/learn-github-actions-demo        # 进入目录
+            tar -jxvf artifact.bz2                # 解压
+            chmod +x ./run.sh && ./run.sh         # 执行部署
