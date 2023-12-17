@@ -35,7 +35,9 @@ jobs:
       # 编译源码 -> 压缩需要的文件
       - name: build source codes with vitepress
         run: |
+          echo "===== build start ====="
           pnpm docs:build
+          ls -al
           mv ./docs/.vitepress/dist
           tar -jcvf artifact.bz2 ./run.sh ./dist
 
