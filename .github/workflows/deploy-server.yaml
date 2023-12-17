@@ -41,17 +41,14 @@ jobs:
 
       # 将打包的结果到服务器
       - name: upload
-        steps:
-          - uses: actions/checkout@v3
-          - name: copy file via ssh password
-            uses: appleboy/scp-action@v0.1.4
-            with:
-              host: ${{ secrets.SSH_HOST }}
-              port: ${{ secrets.SSH_PORT }}
-              username: ${{ secrets.SSH_USERNAME }}
-              password: ${{ secrets.SSH_PASSWORD }}
-              source: ./artifacts.bz2
-              target: ~/deploy-directory
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: ./artifacts.bz2
+          target: ~/deploy-directory
 
   #### 部署到服务器流程 ####
   deploy:
