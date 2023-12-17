@@ -38,8 +38,8 @@ jobs:
           echo "===== build start ====="
           pnpm docs:build
           ls -al
-          mv ./docs/.vitepress/dist
-          tar -jcvf artifact.bz2 ./run.sh ./dist
+          mv ./docs/.vitepress/dist ./output
+          tar -jcvf artifact.bz2 ./run.sh ./output
 
       # 将打包的结果到服务器
       - name: upload
@@ -71,4 +71,4 @@ jobs:
             mkdir -p ~/learn-github-actions-demo  # 创建目录
             cd ~/learn-github-actions-demo        # 进入目录
             tar -jxvf artifact.bz2                # 解压
-            chmod +x ./run.sh && ./run.sh         # 执行部署
+            # chmod +x ./run.sh && ./run.sh         # 执行部署
