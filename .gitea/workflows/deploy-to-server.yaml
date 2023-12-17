@@ -2,7 +2,8 @@ name: Deploy VitePress site to Server
 
 on:
   push:
-    branches: ["main"] # 推送 main 分支的时候执行
+    branches:
+      - main # 推送 main 分支的时候执行
 
 jobs:
   #### 构建流程 ####
