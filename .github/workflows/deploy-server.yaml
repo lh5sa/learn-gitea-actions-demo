@@ -50,7 +50,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           source: ./artifacts.bz2
-          target: ~/deploy-directory
+          target: ~/
 
   #### 部署到服务器流程 ####
   deploy:
@@ -70,5 +70,6 @@ jobs:
             rm -rf ~/learn-github-actions-demo    # 清除上次打包缓存
             mkdir -p ~/learn-github-actions-demo  # 创建目录
             cd ~/learn-github-actions-demo        # 进入目录
+            cp ~/artifact.bz2 ./
             tar -jxvf artifact.bz2                # 解压
             # chmod +x ./run.sh && ./run.sh         # 执行部署
