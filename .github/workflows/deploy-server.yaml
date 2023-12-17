@@ -41,6 +41,9 @@ jobs:
           mv ./docs/.vitepress/dist ./output
           tar -jcvf artifact.bz2 ./run.sh ./output
 
+      - name: show artifaces
+        run: ls  -al
+
       # 将打包的结果到服务器
       - name: upload
         uses: appleboy/scp-action@master
