@@ -15,18 +15,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 安装 node 环境
-      - name: install node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: npm
-
       # 安装 pnpm
       - name: install pnpm
         uses: pnpm/action-setup@master
         with:
           version: 8
+
+      # 安装 node 环境
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: pnpm
 
       # 安装项目需要的依赖
       - name: install dependencies
